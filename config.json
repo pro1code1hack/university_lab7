@@ -1,5 +1,5 @@
 {
-
-
-
+  "driver": "SQL Server",
+  "server": "DESKTOP-11KH138\\SQLEXPRESS",
+  "database": "charms"
 }

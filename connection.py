@@ -1,48 +1,47 @@
 import json
-
-import pypyodbc as odbc
 import sys
+import pypyodbc as odbc
 
 
-def get_cursor(conn):
-    try:
-        return conn.cursor()
-    except Exception as err:
-        raise err
+class DBConnection:
+    def __init__(self, db_name: str = "charms"):
+        self.conn = self.connect_to_db()
+        self.cursor = self.get_cursor(self.conn)
+        self._db_name = db_name  # Good usage of private variable
 
+    @property
+    def db_name(self):
+        return self._db_name
 
-def write_to_file(data):
-    with open('config.json', 'w') as file:
-        json.dump(data, file)
+    @db_name.setter
+    def db_name(self, value):
+        self._db_name = value
 
+    @staticmethod
+    def connect_to_db():
+        # driver = "SQL Server"
+        server, driver = sys.argv[1], sys.argv[2]
+        print("Received the following arguments: ", sys.argv[1:])
 
-def connect_to_db():
-    # DRIVER={SQL Server};SERVER=localhost,58420;DATABASE=charms;UID=kvmi;PWD=kozura1337
-    # driver = input('Enter driver: ')
-    # server = input('Enter server: ')
-    # database = input('Enter database: ')
+        with open('config.json', 'r+') as file:
+            data = json.load(file)
+            server, database = data['server'], data['database']
 
-    # TODO parse data from the command line
-    driver = "SQL Server"
-    server = 'DESKTOP-2K4F8IK\SQLEXPRESS'
-    database = 'charms'
+        conn_string = f"""Driver={{{"SQL Server"}}};Server={server};Database={database};Trust_Connection=yes;"""
 
-    write_to_file({"driver": driver, "server": server, "database": database})
+        try:
+            conn = odbc.connect(conn_string)
+            print('connection established')
+            return conn
+        except Exception as e:
+            print(e)
+            print('HELP')
+            sys.exit()
 
-    print('The argument values are:', driver, server, database)
+    @staticmethod
+    def get_cursor(conn):
+        try:
+            return conn.cursor()
+        except Exception as err:
+            raise err
 
-    conn_string = f"""
-        Driver= {driver};
-        Server= {server};
-        Database= {database};
-        Trust_Connection=yes;
-    """
-
-    try:
-        conn = odbc.connect(conn_string)
-        print('connection established')
-        return conn
-    except Exception as e:
-        print(e)
-        print('task is terminated aaaaa')
-        sys.exit()

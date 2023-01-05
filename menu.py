@@ -1,10 +1,10 @@
-from records import insert_data, update_data, delete_data
+from records import Records
 from users import add_user, update_user, delete_user
 
 records_handlers = {
-    '1': insert_data,
-    '2': update_data,
-    '3': delete_data,
+    '1': Records.insert_data,
+    '2': Records.update_data,
+    '3': Records.delete_data,
 }
 
 users_handlers = {
@@ -34,7 +34,6 @@ class Menu:
             users_handlers[choice](*args, **kwargs)
         else:
             print('Invalid choice')
-
 
 
 main_handlers = {
