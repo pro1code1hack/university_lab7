@@ -1,5 +1,5 @@
-import os
-import sys
+import json
+
 import pypyodbc as odbc
 import sys
 
@@ -11,18 +11,30 @@ def get_cursor(conn):
         raise err
 
 
+def write_to_file(data):
+    with open('config.json', 'w') as file:
+        json.dump(data, file)
+
+
 def connect_to_db():
+    # DRIVER={SQL Server};SERVER=localhost,58420;DATABASE=charms;UID=kvmi;PWD=kozura1337
+    # driver = input('Enter driver: ')
+    # server = input('Enter server: ')
+    # database = input('Enter database: ')
 
-    #driver = input('Enter driver: ')
-    #server = input('Enter server: ')
-    #database = input('Enter database: ')
+    # TODO parse data from the command line
+    driver = "SQL Server"
+    server = 'DESKTOP-2K4F8IK\SQLEXPRESS'
+    database = 'charms'
 
-    print('The argument values are:', str(sys.argv))
+    write_to_file({"driver": driver, "server": server, "database": database})
+
+    print('The argument values are:', driver, server, database)
 
     conn_string = f"""
-        Driver={{{os.getenv('DRIVER')}}};
-        Server={os.getenv('SERVER_NAME')};
-        Database={os.getenv('DATABASE_NAME')};
+        Driver= {driver};
+        Server= {server};
+        Database= {database};
         Trust_Connection=yes;
     """
 
